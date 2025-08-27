@@ -1,0 +1,33 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pfptest
+spec:
+  backoffLimit: 6
+  template:
+    spec:
+      restartPolicy: Never
+      nodeSelector:
+        kubernetes.io/hostname: pfptest-worker
+      containers:
+      - name: worker
+        image: local/pfptest:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: MODE
+          value: "oom"
+        resources:
+          limits:
+            memory: "64Mi"   # small memory to trigger OOM
+          requests:
+            memory: "64Mi"   # optional, ensures scheduling fits
+  podFailurePolicy:
+    rules:
+    - action: Ignore
+      onPodConditions:
+      - type: DisruptionTarget
+    - action: FailJob
+      onExitCodes:
+        containerName: worker
+        operator: In
+        values: [137]
