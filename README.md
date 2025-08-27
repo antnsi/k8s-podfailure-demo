@@ -3,6 +3,20 @@
 This snippet demonstrates using `podFailurePolicy` with Kubernetes Job.  
 It shows how to pods restarts on node disruptions (spot interruption) while failing on OOM.
 
+### Setup
+```sh
+./setup.sh
+```
+
+### Showcase
+```sh
+./run.sh
+```
+- **Normal mode**: Start the Job; a new pod is created and runs normally
+
+- **Spot interruption**: Restart the worker node; a new pod is created and runs normally (`backoffLimit: 6`). Ideally, the node is replaced but whatever :)
+
+- **OOMKilled simulation**: Run a Job configured to exceed memory limits; the pod dies and does not restart.
 
 ### Output
 
